@@ -1,4 +1,4 @@
-Long-range Extrapolation and Pattern Discovery given Limited Data
+Long-range Forecasting and Pattern Discovery given Limited Data
 ==================================================================
 
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/haystax-technology/long-range-extrapolation/master)
@@ -9,7 +9,7 @@ Purpose
 -------
 
 This repo provides the code and data used to generate results in our
-paper "**Long-range Extrapolation and Pattern Discovery given Limited Data**"
+paper "**Long-range Forecasting and Pattern Discovery given Limited Data**"
 
 Abstract
 --------
@@ -21,12 +21,12 @@ Citation
 
 If you do end up using our code, please cite our paper as follows.
 
-    Emaasit, D., Veeramisti, N., Paz, A., and Johnson, M., 2018. “Long-range Extrapolation and Pattern Discovery given Limited Data.” ArXiv Preprint
+    Emaasit, D., Veeramisti, N., Paz, A., and Johnson, M., 2018. “Long-range Forecasting and Pattern Discovery given Limited Data.” ArXiv Preprint
 
 Or using BibTex as follows:
 
     @article{emaasit2018long,
-      title={Long-range Extrapolation and Pattern Discovery given Limited Data},
+      title={Long-range Forecasting and Pattern Discovery given Limited Data},
       author={Emaasit, Daniel and Veeramisti, Naveen and Paz, Alexander, and Johnson, Matthew},
       journal={arXiv},
       year={2018}
