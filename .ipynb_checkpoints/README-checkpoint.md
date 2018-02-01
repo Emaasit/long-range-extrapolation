@@ -37,4 +37,4 @@ Getting Help
 
 Incase you need help running this code or have general questions, don't
 hesitate to email us at <demaasit@haystax.com> or
-<daniel.emaasit@gmail.com>.
+<mjohnson@haystax.com>.
