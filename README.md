@@ -3,7 +3,7 @@ Long-range Forecasting and Pattern Discovery given Limited Data
 
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/haystax-technology/long-range-extrapolation/master)
 
-<img src="paper/figures/spectral-optimized.png" width="75%" />
+<img src="code/notebooks/results-saved/emails/model-emails.png" width="75%" />
 
 Purpose
 -------
@@ -14,7 +14,7 @@ paper "**Long-range Forecasting and Pattern Discovery given Limited Data**"
 Abstract
 --------
 
-Scientific fields such as insider-threat detection and highway-safety planning often lack sufficient amounts of time-series training data for the purpose of scientific discovery. Moreover, the available limited data are very noisy. This presents a major challenge when estimating statistical models to extract hidden patterns and perform accurate predictions. That is, it is difficult to explicitly incorporate expressive structure into the statistical models during formulation. Most of the current literature involve visualizing the time-series for noticeable structure -- such as periodicity -- and hard coding them into pre-specified parametric functional forms. Two limitations arise. First, such trends may not be noticeable in small data. Second, it is difficult to know $\textit{a priori}$ the most appropriate functional form to use. To address these limitations, a nonparametric Bayesian approach was proposed to capture hidden structure from limited data and perform accurate long-range forecasting. The proposed model, a Gaussian process with a spectral mixture kernel, precludes the need to pre-specify a functional form and hard code trends. Bayesian modeling was adopted to account for uncertainty.
+Scientific fields such as insider-threat detection and highway-safety planning often lack sufficient amounts of time-series training data for the purpose of scientific discovery. Moreover, the available limited data are very noisy. This presents a major challenge when estimating statistical models to extract hidden patterns and perform accurate forecasting. Most of the current literature in insider-threat detection and highway-safety planning involve visualizing the time-series for noticeable structure, such as periodicity, and hard coding them into pre-specified parametric functions. This approach is associated with two limitations. First, given that such trends may not be noticeable in small data, it is difficult to explicitly incorporate expressive structure into the statistical models during formulation.  Second, it is difficult to know $\textit{a priori}$ the most appropriate functional form to use. To address these limitations, a nonparametric Bayesian approach was proposed to capture hidden structure from limited data and perform accurate long-range forecasting. The proposed model, a Gaussian process with a spectral mixture kernel, precludes the need to pre-specify a functional form and hard code trends. Bayesian modeling was adopted to account for uncertainty.
 
 Citation
 --------
