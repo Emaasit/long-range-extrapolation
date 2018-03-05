@@ -3,7 +3,7 @@ Long-range Forecasting and Pattern Discovery given Limited Data
 
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/haystax-technology/long-range-extrapolation/master)
 
-<img src="code/notebooks/results-saved/emails/model-emails.png" width="75%" />
+<img src="code/notebooks/results/emails/model-emails.png" width="75%" />
 
 Purpose
 -------
@@ -35,6 +35,4 @@ Or using BibTex as follows:
 Getting Help
 ------------
 
-Incase you need help running this code or have general questions, don't
-hesitate to email us at <demaasit@haystax.com> or
-<mjohnson@haystax.com>.
+Incase you need help running this code or have general questions, don't hesitate to email us at <demaasit@haystax.com> or <daniel.emaasit@gmail.com>.
