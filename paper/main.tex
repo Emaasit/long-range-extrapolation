@@ -1,7 +1,29 @@
 % Sample LaTeX file for creating a paper in the Morgan Kaufmannn two
 % column, 8 1/2 by 11 inch proceedings format.
 
-\documentstyle[proceed]{article}
+\documentclass[letterpaper]{article}
+\usepackage{proceed2e}
+\usepackage[margin=1in]{geometry}
+\usepackage[round]{natbib}
+\usepackage[colorlinks=true,citecolor=blue,linkcolor=blue,urlcolor=blue]{hyperref}
+\usepackage{graphicx}
+\usepackage{svg}
+\usepackage{epstopdf}
+\usepackage{subfig}
+\usepackage[]{bm}
+\usepackage[]{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{multirow}% http://ctan.org/pkg/multirow
+\usepackage{booktabs}% http://ctan.org/pkg/booktabs
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{lipsum} % for dummy text only
+
+% Set the typeface to Times Roman
+\usepackage{times}
+
+%%%%%%%%% my defined packages %%%%%
+% \usepackage{authblk}
 
 \title{Long-range Forecasting and Pattern Discovery given Limited Data}
 
@@ -10,25 +32,25 @@
 
 % The author names and affiliations should appear only in the accepted paper.
 %
-\author{ {\bf Daniel Emaasit\thanks{Footnote}} \\
+\author{ {\bf Daniel Emaasit\thanks{Corresponding author. Submitted to the 2018 International Conference on Uncertainty in Artificial Intelligence (UAI), Monterey, California.}} \\
 Haystax Technology \\
 McLean, VA    \\
 demaasit@haystax.com\\
 \And
-{\bf Naveen Veeramisti}  \\
+{\bf Naveen Veeramisti, Ph.D.}  \\
 HDR Engineering          \\
 Las Vegas, NV \\
-veeramisti@hdr.com \\
-\And
-{\bf Alexander Paz}   \\
-UNLV \\
-Las Vegas, NV    \\
-apaz@unlv.edu\\
+nveeramisti@hdr.com \\
 \And
 {\bf Matthew Johnson}   \\
 Haystax Technology \\
 McLean, VA    \\
 mjohnson@haystax.com\\
+\And
+{\bf Alexander Paz, Ph.D.}   \\
+UNLV \\
+Las Vegas, NV    \\
+apaz@unlv.edu\\
 }
 
 \begin{document}
@@ -36,149 +58,423 @@ mjohnson@haystax.com\\
 \maketitle
 
 \begin{abstract}
-The Abstract paragraph should be indented 0.25 inch (1.5 picas) on
-both left and right-hand margins.  Use 10~point type, with a vertical
-spacing of 11~points.  {\bf Abstract} must be centered, bold, and in
-point size 12. Two line spaces precede the Abstract. The Abstract must
-be limited to one paragraph.
+Scientific fields such as insider-threat detection and highway-safety planning often lack sufficient amounts of time-series training data for the purpose of scientific discovery. Moreover, the available limited data are very noisy. This presents a major challenge when estimating statistical models to extract hidden patterns and perform accurate forecasting. Most of the current literature in insider-threat detection and highway-safety planning involve visualizing the time-series for noticeable structure, such as periodicity, and hard coding them into pre-specified parametric functions. This approach is associated with two limitations. First, given that such trends may not be noticeable in small data, it is difficult to explicitly incorporate expressive structure into the statistical models during formulation.  Second, it is difficult to know \textit{a priori} the most appropriate functional form to use. To address these limitations, a nonparametric Bayesian approach was proposed to capture hidden structure from limited data and perform accurate long-range forecasting. The proposed model, a Gaussian process with a spectral mixture kernel, precludes the need to pre-specify a functional form and hard code trends. Bayesian modeling was adopted to account for uncertainty.
 \end{abstract}
 
-\section{GENERAL FORMATTING INSTRUCTIONS}
+\section{INTRODUCTION}
 
-Papers are in 2 columns with the overall line width of 6.75~inches
-(41~picas).  Each column is 3.25~inches wide (19.5~picas).  The space
-between the columns is .25~inches wide (1.5~picas).  The left margin
-is 1~inch (6~picas).  Use 10~point type with a vertical spacing of
-11~points.  Times Roman is the preferred typeface throughout.
+Modeling expressive structure in time-series data is a vital requirement in several scientific fields including cybersecurity, insider-threat detection, and highway-safety planning for the purpose of scientific discovery. However, these fields often lack sufficient amounts of training data to accurately capture the entire structure of the phenomenon under study and consequently discover hidden patterns. For instance \citet{schrag2016probabilistic} emphasizes that typically cases of insider threat such as intellectual property theft through emails constitute less than 0.01\% of the overall insider activity. Out of 100,000 emails sent outside the organization over the course of 2 years only 30 were identified as IP theft. In highway safety planning, \cite{veeramisti2016business} mentions that Departments of Transportation (DOTs) only recently started collecting monthly crash data. 
+\lipsum[1-1]
 
-Paper title is 16~point, caps/lc, bold, centered between 2~horizontal
-rules.  Top rule is 4~points thick and bottom rule is 1~point thick.
-Allow 1/4~inch space above and below title to rules.
+% The following subsections describe why these two scientific fields lack sufficient training data and the limitations of the current methods of time series modeling.
 
-Reviewing is double-blind, so do not include author names, affiliations, or any
-other identifying information in the original submission.  If you include urls
-to supplementary material, make sure the urls also do not disclose your identity.
+\subsection{INSIDER THREAT}\label{insider-threat}
 
-After a paper is accepted, for the camera-ready submission, Authors' names are
-centered, initial caps.  The lead author's name is to be listed first
-(left-most), and the Co-authors' names (if different address) are set to
-follow.  If only one co-author, center both the author and co-author,
-side-by-side.
+Insider threats are malicious acts carried out by current or former employees or trusted partners of an organization who abuse their authorized access to an organization's networks, systems, and/or data \citep{glasser2013bridging, lindauer2014generating}. Insider threats include but not limited to, theft of intellectual property or national security information, fraud, and sabotage. Many government, academic, and industry groups seek to discover and develop solutions to detect and protect against these insider threats. However, the difficulty of obtaining suitable data for research, development, and testing remains a significant hinderance \citep{glasser2013bridging}. This is attributed to two major factors. First, confidentiality and privacy concerns create barriers to the collection and use of such data for research purposes. To collect real data, some organization must directly monitor and record the behavior and actions of its own employees. Second, insider threats are swarn-like behavior that are very rare and only collected after the fact \citep{gheyas2016detection}. Nonetheless, some studies have proposed methods for time series analysis. For example, \cite{stoffel2013finding} proposed a stochastic time series model, a seasonal auto-regressive integrated moving average (sARIMA) model, to forecast the number of emails sent by insiders.
 
-One-half line space between paragraphs, with no indent.
+ 
 
-\section{FIRST LEVEL HEADINGS}
+\subsection{HIGHWAY SAFETY}\label{highway-crash-safety}
+The Federal Highway Administration (FHWA) requires state Departments of Transportation (DOTs) to develop Highway Safety Plans (SHSPs) to obtain funding as part of the two legislative acts. DOTs' Strategic Highway Safety Plans need to establish statewide performance measures, targets, and strategies to improve traffic safety across critical emphasis areas. State Departments of Transportation (DOTs) in the United States are tasked with making reasonable predictions of highway crashes on roadways based on historical data. This is so as to set realistic targets for performance-based safety programs to reduce fatalities and serious injuries. \cite{veeramisti2016business} proposed a stochastic time series model, a seasonal auto-regressive integrated moving average (sARIMA) model, to forecast performance measures for performance-based safety programs. These targets can be used to determine future statewide safety improvement programs and policies. From the perspective of state agencies, predicting the number of fatalities and serious injuries is significantly important to meet the requirements of MAP-21.\todo[size=\small]{Add citation for FHWA MAP-21.}%
 
-First level headings are all caps, flush left, bold and in point size
-12. One line space before the first level heading and 1/2~line space
-after the first level heading.
+\subsection{LIMITATIONS AND RESEARCH QUESTION}\label{limitations-and-research-questions}
 
-\subsection{SECOND LEVEL HEADING}
+Current methods for time-series modeling for insider-threat detection and highway-safety planning (described in sections \ref{insider-threat} and \ref{highway-crash-safety}) are associated with two major limitations.  First, given the small amount of data is that it is difficult to explicitly incorporate expressive prior information (such as periodicity, smoothness, growing tends) into the statistical learning algorithms. This is in contrast to large data such that more data typically provides more information to learn expressive structure \citep{wilson2014covariance}. That is, an analyst is able to look at the data, recognize trends (i.e. periodicity, seasonal variation with possible decay away from periodicity, long-term rising/decreasing trends, medium-term irregularities, short seasonal variations, and noise), and then hard code those patterns into statistical algorithms such as ARIMA to represent each of these patterns. The limitation with this approach is that all the pattern discovery is done by the analyst and the resulting algorithm is used simply as a smoothing tool. Second, another property of limited data is negative covariances. While positive covariances are often suitable for interpolation, capturing negative covariances can be essential for extrapolating patterns. For example, linear trends in time series data typically have long range negative covariances. Current autoregressive time-series methods cannot adequately model negative covariances.  Third, small time-series data usually have difficult patterns are cannot be captured by current methods. \todo[size=\small]{add differencing, stationary limitation}%
 
-Second level headings must be flush left, all caps, bold and in point
-size 10. One line space before the second level heading and 1/2~line
-space after the second level heading.
+Given limited and noisy time-series data for insider-threat detection and highway-safety planning, is it possible to perform: (1) long-range extrapolation far beyond available data, and (2) pattern discovery without hard-cording trends into statistical models during formulation? To answer these two research questions and address the above described limitations, this paper proposed a nonparametric Bayesian framework which is applied as an example to estimate two time series models: (1) the number of emails sent outside an organization by insiders and (2) the number of highway crashes in Nevada. The proposed framework combines the flexibility of nonparametric Bayesian approaches \citep{williams2006gaussian,hjort2010bayesian,ghahramani2015probabilistic} and kernels with more expressive properties \citep{wilson2013gaussian, duvenaud2014automatic} than standard kernels proposed by \cite{williams2006gaussian}. In particular, a flexible nonparametric model -- i.e., the Gaussian process (GP) model --  is proposed as a prior distribution for the unknown regression functions, thereby precluding the need to pre-specify a functional form. Flexibility is achieved by making weaker assumptions about model structure, thereby capturing the underlying behavior from data by exploring an infinite dimensional space of possible functions. Moreover, an expressive covariance -- i.e., the spectral mixture (SM) kernel \citep{wilson2014covariance} -- is proposed as the covariance for the GP model thereby precluding the need to hard cord trends and consequently allows to automatically discover hidden structure from limited data. The SM kernel is particularly useful when standard kernels such as the radial basis function fail to capture functional structure \citep{schulz2017compositional} in limited noisy data commonly found in insider-threat detection and highway-crash analysis. Recent advances in computing and efficient sampling methods, such as the Hamiltonian Monte Carlo (HMC) \citep{hoffman2014no} enable fast inference in flexible models. Moreover, a Bayesian modeling approach was used for inference to quantify all uncertainty, using probability distributions. The proposed GP-SM model maintained the attractive interpretability properties of a standard GP model; that is, the posterior mean and credible intervals of the predicted series could be analyzed to visualize how the response variable varies over time. 
 
-\subsubsection{Third Level Heading}
+The rest of this paper is organized as follows. Section \ref{methodology} describes the proposed methodology, including model formulation and estimation using two efficient Bayesian inference methods. Section \ref{experiments} describes the experiments performed including a description of the data used, the sample formation processes, and empirical analyses. Finally, a conclusion that summarizes the important findings from this study are presented in Section \ref{conclusions-and-future-work}, including recommendations for future research.
+ 
 
-Third level headings must be flush left, initial caps, bold, and in
-point size 10.  One line space before the third level heading and
-1/2~line space after the third level heading.
+\section{METHODOLOGY}\label{methodology}
 
-\vskip .5pc
-Fourth Level Heading
+\subsection{MODEL FORMULATION}\label{model-formulation}
 
-Fourth level headings must be flush left and initial caps.
-One line space before the fourth level heading and 1/2~line space
-after the fourth level heading.
+To formulate the methodology, consider for each data point, $i$, that $y_i$ represents a response variable (such as the attachment size in emails sent by an insider outside the organization or number of highway crashes) and $x_i$ is a temporal covariate such as year, month, week, or day. Regression modeling can involve estimating a latent function \(f\), which maps input data, $x_i$, to output data \(y_i\) for \(i\) = 1, 2, \ldots{}, \(N\), where \(N\) is the total number of data points. Each of the input data $x_i$ is of a single dimension $D = 1$, and \(\textbf{X}\) is a \(N\) x \(D\) matrix with rows $x_i$. The observations are assumed to satisfy:
+\begin{equation}\label{eqn:additivenoise}
+y_i = f(x_i) + \varepsilon, \quad where \, \, \varepsilon \sim \mathcal{N}(0, \sigma_{\varepsilon}^2)
+\end{equation}
+The noise term, $\varepsilon$, is assumed to be normally distributed with a zero mean and variance, $\sigma_{\varepsilon}^2$. Latent function \(f\) represents hidden underlying trends that produced the observed time-series data.
 
-\subsection{CITATIONS, FIGURES, REFERENCES}
+Given that it is difficult to know $\textit{a priori}$ the most appropriate functional form to use for \(f\), a prior distribution, \(p(\bm{f})\), over an infinite number of possible functions of interest is formulated. A natural prior over an infinite space of functions is a Gaussian process prior \citep{williams2006gaussian}. Formally, a GP is defined as a collection of random variables, \(f(x_i)\), any finite subset of which, \(\textbf{f} = \{f(x_i)\}_{i=1}^N\), has a joint Gaussian distribution, \(p(\textbf{f} \mid \textbf{X}) = \mathcal{N}(\textbf{f} \mid \textbf{m}, \textbf{K}_{N,N})\). The parameter \(\textbf{m}\) denotes the mean function (or mean vector) which specifies the expected output of the function \(\textbf{f}\) given input $\textbf{X}$, and \(\textbf{K}_{N,N}\) denotes the covariance function (or covariance matrix or kernel) which specifies the covariance between outputs \(\textbf{y} = \{(y_i)\}_{i=1}^N\). A GP is fully parameterized by a mean function and covariance function, denoted as: 
+\begin{equation}\label{eqn:gpsim}
+\textbf{f} \sim \mathcal{GP}(\textbf{m}, \textbf{K}_{N,N}),
+\end{equation}
+where each element in the mean vector and covariance matrix is given by equation \ref{eqn:params-mean} and \ref{eqn:params-kernel}, respectively:
+\begin{align}
+m(x_i) &=\mathbb{E}[f(x_i)], \label{eqn:params-mean}\\
+k(x_i, x_j) &=\mathbb{E}[(f(x_i)-m(x_i))(f(x_j)-m(x_j))^{\mathsf{T}}] \label{eqn:params-kernel}.
+\end{align}
+The kernel function, $\textbf{K}_{N,N}$, is used to encode prior assumptions of smoothness of functions such as periodicity, rising or decreasing long-term and short-term trends \citep{williams2006gaussian}. However, such properties may not be easily noticeable in time-series data for insider-threat detection and highway-crash forecasting. To address this limitation, a spectral mixture (SM) kernel \citep{wilson2014covariance,wilson2015human} was proposed for the covariance function. The SM kernel is able to implicitly capture structure by leveraging the idea that any standard kernel can be expressed as an integral using Bochner’s theorem, as illustrated below.
 
+A standard stationary kernels is a functions of $\tau=x_i - x_j \in \mathbb{R}^p$, then
+\begin{equation}\label{eqn:bochner-theorem}
+k(\tau) = \int_{\mathbb{R}_P} \exp({2\pi is^\mathsf{T}\tau})\psi(d\mathbf{s}).
+\end{equation}
+If $\psi$ has a density $S(\mathbf{s})$, then $S$ is the spectral density of $k$; $S$ and $k$ are thus Fourier duals (\cite{williams2006gaussian}, see Appendix). This means that a spectral density over the kernel space fully defines the kernel and that furthermore every stationary kernel can be expressed as a spectral density. The spectral density modeled with a single Gaussian can be expressed as:
+\begin{equation}\label{eqn:single-guassian}
+\phi(s,\mu,\sigma^2) = \frac{1}{{\sigma \sqrt {2\pi } }}e^{{{ - \left( {s - \mu } \right)^2 } \mathord{\left/ {\vphantom {{ - \left( {s - \mu } \right)^2 } {2\sigma ^2 }}} \right. \kern-\nulldelimiterspace} {2\sigma ^2 }}}
+\end{equation}
+The density $S(\mathbf{s})$ is called the spectral density of $k$ and is given by:
+\begin{equation}\label{eqn:single-guassian}
+S(\mathbf{s})=\frac{1}{2}[\phi(s)-\phi(-s)]
+\end{equation}
+The resulting kernel is given by:
+\begin{equation}\label{eqn:spectral-kernel}
+k(\tau)=\exp(-2\pi^2\tau^2\sigma^2)\cos(2\pi\tau\mu)
+\end{equation}
+The spectral density can be approximated by a mixture of $Q$ Gaussians \citep{wilson2015human} as follows:
+\begin{equation}\label{eqn:mixture-of-guassians}
+k(\tau) = \sum_{q=1}^{Q}w_q\prod_{p=1}^{P} \exp(-2\pi^2\tau_{p}^2\upsilon_q^2)\cos(2\pi\tau_p\mu_q^{(p)}),
+\end{equation}
+where the $q$th component has mean vector $\bm{\mu}_q=(\mu_q^{(1)}, ...,\mu_q^{(p)})$ and a covariance matrix $\mathbf{M}_q$ = diag$(\upsilon_q^{(1)}, ..., \upsilon_q^{(p)})$. The inverse mean represents the component periods and the inverse standard deviation the length scales. The result is a flexible and expressive parametrization of the kernel, in which complex kernels are approximated by mixtures of simpler ones. The reader is refereed to \cite{wilson2015human} for a more detailed formulation of the SM kernel.
 
-\subsubsection{Citations in Text}
+The likelihood of the response variable is a noisy sample from the latent function expressed as:
+\begin{equation}\label{eqn:data-likelihood}
+p(\textbf{y} \mid \textbf{f}, \textbf{X}) = \mathcal{N}(\textbf{f}, \sigma_{\varepsilon}^2).
+\end{equation}
+Given the GP prior in Equation \eqref{eqn:gpsim} and the data likelihood in Equation \eqref{eqn:data-likelihood}, the posterior distribution over the unknown function evaluations \(\textbf{f}\) at all data points \(x_i\), was estimated using Bayes theorem: 
+\begin{equation}\label{eqn:bayesinfty}
+\begin{aligned}
+p(\textbf{f} \mid \textbf{y},\textbf{X}) &= \frac{p(\textbf{y} \mid \textbf{f}, \textbf{X}) \, p(\textbf{f})}{p(\textbf{y} \mid \textbf{X})}, \\
+&= \frac{p(\textbf{y} \mid \textbf{f}, \textbf{X}) \, \mathcal{N}(\textbf{f} \mid \textbf{m}, \textbf{K}_{N,N})}{p(\textbf{y} \mid \textbf{X})},
+\end{aligned}
+\end{equation}
+where:
 
-Citations within the text should include the author's last name and
-year, e.g., (Cheesman, 1985). Reference style should follow the style
-that you are used to using, as long as the citation style is
-consistent.
+\begin{center} 
+\begin{minipage}{10cm} 
+\begin{tabbing}
+\phantom{$D_{n50}\ $}\= \kill
+$p(\textbf{f}\mid \textbf{y},\textbf{X})$ = the posterior distribution of functions that\\ best explain the response variable, given the covariates \\
+$p(\textbf{y} \mid \textbf{f}, \textbf{X})$ = the likelihood of response variable, given\\ the functions and covariates \\ 
+$p(\textbf{f})$ = the prior over all possible functions of the\\ response variable \\
+$p(\textbf{y} \mid \textbf{X})$ = the data (constant)
+\end{tabbing}
+\end{minipage} 
+\end{center}
+This posterior is a Gaussian process composed of a distribution of possible functions that best explain the time-series pattern. Given that the data are fixed, equation \eqref{eqn:bayesinfty} was re-formulated as the unnormalized posterior distribution
+\begin{equation}\label{eqn:bayesinfty-unormalized}
+p(\textbf{f} \mid \textbf{y},\textbf{X}) \propto p(\textbf{y} \mid \textbf{f}, \textbf{X}) \, \mathcal{N}(\textbf{f} \mid \textbf{m}, \textbf{K}_{N,N}).
+\end{equation}
+The posterior predictive distribution for a new input $x_{\star}$ conditional on observed data $\mathscr{D} = \{y_i, x_i\}_{i=1}^{N}$ is Gaussian with mean and variance given by:
+\begin{align}
+\mathbb{E}[f(x_{\star} \mid \mathscr{D})] &=k_{\star}^{\mathsf{T}}(\textbf{K}_{N,N}+\sigma^2\textbf{I})^{-1}\textbf{y}, \label{eqn:mean-predict}\\
+\mathbb{V}[f(\textbf{x}_{\star} \mid \mathscr{D})] &=k(\textbf{x}_{\star}, \textbf{x}_{\star})-\textbf{k}_{\star}^{\mathsf{T}}(\textbf{K}_{N,N}+\sigma^2\textbf{I})^{-1}\textbf{k}_{\star} \label{eqn:kernel-predict}.
+\end{align}
+where $\textbf{k}_{\star}$ is the covariance between each observed input and the new input $\textbf{x}_{\star}$.
 
-For the original submission, take care not to reveal the authors' identity through
-the manner in which one's own previous work is cited.  For example, writing
-``In (Bovik, 1970), we studied the problem of AI'' would be inappropriate, as
-it reveals the author's identity.  Instead, write ``(Bovik, 1970) studied the
-problem of AI.''
+% \begin{table*}[t]
+% \caption{Descriptive statistics of durations (in mins) by activity type}
+% \label{tab:descriptive-stats-injury}
+% \begin{center}
+% \begin{tabular}[t]{lrrrrrr}
+% \multicolumn{1}{c}{\bf ACTIVITY TYPE}  &\multicolumn{1}{c}{\bf MEAN}  &\multicolumn{1}{c}{\bf STD DEV}  &\multicolumn{1}{c}{\bf MIN}  &\multicolumn{1}{c}{\bf MAX}  &\multicolumn{1}{c}{\bf FREQUENCY}  &\multicolumn{1}{c}{\bf PERCENTAGE (\%)} \\
+% \hline \\
+% Personal activities & 309.5 & 269.0 & 1.0 & 1,370 & 12,296 & 51.4\\
+% Meals & 342.1 & 262.1 & 1.0 & 1,249 & 4,837 & 20.2\\
+% Shopping & 35.2 & 44.3 & 1.0 & 635 & 3,735 & 15.6\\
+% Physically inactive recreation & 157.3 & 187.1 & 1.0 & 1,069 & 1,896 & 7.9\\
+% Physically active recreation & 186.4 & 165.9 & 1.0 & 1,254 & 1,142 & 4.8\\
+% \end{tabular}
+% \end{center}
+% \end{table*}
 
-\subsubsection{Footnotes}
+\subsection{MODEL ESTIMATION}\label{model-estimation}
 
-Indicate footnotes with a number\footnote{Sample of the first
-footnote} in the text. Use 8 point type for footnotes.  Place the
-footnotes at the bottom of the page on which they appear.  Precede the
-footnote with a 0.5 point horizontal rule 1~inch (6~picas)
-long.\footnote{Sample of the second footnote}
+Model estimation involved finding values for eighteen hyperparameters, including nine frequency parameters and nine lengthscale parameters. These hyperparameters describe the distribution over functions rather than the functions themselves. Bayesian inference, which was adopted to estimate these hyperparameters, involved expressing prior beliefs over all the hyperparameters and using probability theory to update those beliefs in light of the observed data. In this approach, in contrast to MLE, overfitting is of less concern because optimization or the minimization of an error is not used for estimation \citep{mchutchon2014nonlinear,ghahramani2015probabilistic}. Recent sampling methods considered to be efficient are used to explore the posterior distribution of the proposed model. Initial sampling was performed using an approximate method, known as automatic differentiation variational inference (ADVI) \citep{kucukelbir2015automatic}. Final sampling used an exact Markov chain Monte Carlo (MCMC) method, known as the Hamiltonian Monte Carlo (HMC); in particular, the No-U-Turn Sampler (NUTS) \citep{hoffman2014no} was used. Bayesian optimization \citep{brochu2010tutorial, emaasit2018simultaneous} was used to tune the hyperparameters.
 
-\subsubsection{Figures}
+Code and data for the experiments described in the next section are available on GitHub at \href{https://github.com/emaasit/long-range-extrapolation}{https://github.com/emaasit/long-range-extrapolation}.
 
-All artwork must be centered, neat, clean, and legible. Figure number
-and caption always appear below the figure.  Leave 2 line spaces
-between the figure and the caption. The figure caption is initial caps
-and each figure numbered consecutively.
+\section{EXPERIMENTS}\label{experiments}
 
-Make sure that the figure caption does not get separated from the
-figure. Leave extra white space at the bottom of the page rather than
-splitting the figure and figure caption.
-\begin{figure}[h]
-\vspace{1in}
-\caption{Sample Figure Caption}
-\end{figure}
+\subsection{INSIDER THREAT}
+\subsubsection{Raw data and sample formation}
 
-\subsubsection{Tables}
+The data used was collected from the Carnegie Mellon CERT Insider Threat Tools dataset, a synthetically generated insider cyber test dataset \citep{glasser2013bridging}. The data represents a fictitious company, with the employees, and features such as their computers, files, removable media and websites they visited. The particular insider threat we have focused on is the case where an employee is repeatedly stealing information from their co-workers by logging into their machines, opening files, and sending them to his home e-mail address.
 
-All tables must be centered, neat, clean, and legible. Table number
-and title always appear above the table.  See
-Table~\ref{sample-table}.
-
-One line space before the table title, one line space after the table
-title, and one line space after the table. The table title must be
-initial caps and each table numbered consecutively.
+To obtain the sample for the current analysis, the CERT data was processed as follows. First, data taking place in the month of April 2011 were filtered.
+\lipsum[1-1]
 
 \begin{table}[h]
-\caption{Sample Table Title}
-\label{sample-table}
+\caption{Descriptive statistics for monthly-attachment-size of emails in GB sent by a known insider outside the organization.}
+\label{tab:descriptive-stats-emails}
 \begin{center}
-\begin{tabular}{ll}
-\multicolumn{1}{c}{\bf PART}  &\multicolumn{1}{c}{\bf DESCRIPTION} \\
-\hline \\
-Dendrite         &Input terminal \\
-Axon             &Output terminal \\
-Soma             &Cell body (contains cell nucleus) \\
+\begin{tabular}{l@{\qquad}cc}
+  \toprule
+  \multirow{2}{*}{\raisebox{-\heavyrulewidth}{\bf STATISTIC}} & \multicolumn{2}{c}{\bf EMAIL DESTINATION} \\
+  \cmidrule{2-3}
+  & {\bf Personal account} & {\bf Non-personal} \\
+  \midrule
+  Mean & 3.84 & 37.52  \\
+  Std Dev & 2.28 & 13.38  \\
+  Min & 0.18 & 10.56  \\
+  Max & 7.96 & 57.78  \\
+  Count & 14 & 14  \\
+  \bottomrule
 \end{tabular}
 \end{center}
 \end{table}
+
+\begin{figure}[h]
+\begin{center}
+% \vspace{1in}
+\includegraphics[width=\linewidth]{figures/data-email.png}
+\caption{Monthly-attachment-size of emails in GB sent by a known insider to a personal account.}
+\label{fig:fatal-crashes}
+\end{center}
+\end{figure}
+
+\subsubsection{Empirical Analysis}
+
+In the training region, predictions using both sARIMA and GP-SM are equivalent, and entirely overlap with training data. However, unlike sARIMA, the GP model (in black) is able to discover the patterns in the training data and accurately extrapolate over a long range. The 95\% credible interval (CI) contains the true highway crash counts for the duration of the measurements. 
+
+\lipsum[1-2]
+
+\begin{table}[h]
+\caption{Performance measures for the three different models on email data}
+\label{tab:descriptive-stats-emails}
+\begin{center}
+\begin{tabular}{l@{\qquad}cc}
+  \toprule
+  \multirow{2}{*}{\raisebox{-\heavyrulewidth}{\bf MODEL}} & \multicolumn{2}{c}{\bf MEASURE} \\
+  \cmidrule{2-3}
+  & {\bf RMSE} & {\bf MAPE} \\
+  \midrule
+  GP-SM & {\bf 1.25} & {\bf 27.96\%}  \\
+  GP-SM Optimized & 1.29 & 28.80\%  \\
+  ARIMA & 3.20 & 93.44\%  \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+Figure 3.2 shows the structure discovered by the GP-SM model 
+
+\begin{figure*}[t]
+      \subfloat[GP-SM\label{subfig:model-emails}]{%
+       \includegraphics[width=3.1in]{figures/model-emails.png}
+     }
+     \hfill
+     \subfloat[GP-SM Optimized\label{subfig:model-opt-emails}]{%
+       \includegraphics[width=3.1in]{figures/model-opt-emails.png}
+     }
+     \hfill
+     \subfloat[ARIMA\label{subfig:arima-email}]{%
+       \includegraphics[width=3.1in]{figures/model-emails-arima.png}
+     }  
+     \hfill
+     \subfloat[Number of Iterations of Bayesian Optimization\label{subfig:iterations-email}]{%
+       \includegraphics[width=3.1in]{figures/iterations-email.png}
+     }   
+     \caption{Gaussian process models with spectral mixture kernels for emails.}
+     \label{fig:gp-posterior}
+\end{figure*}
+
+\subsection{HIGHWAY SAFETY}
+
+\subsubsection{Raw data and sample formation}
+
+The highway-crash data used for empirical analysis in this study was provided by the Nevada Department of Transportation (NDOT). This data consists of two types of crash severity including the number of fatalities and serious injuries aggregated over an exposure variable called vehicle miles traveled (VMT), ranging from 1995 to 2013. This resulted in fatalities per 100 million vehicle miles traveled and serious injuries per 100 million VMT. Given that NDOT only collects these crash counts annually from NDOT, they lack seasonality.
+
+To obtain the sample for the current analysis, the crash data was processed as follows. Table \ref{tab:descriptive-stats-fatalities} provides descriptive statistics of crash-severity types. The data are shown in Figure 3.1. The first 100 months are used for training (in blue), and the remaining 200 months (4 years) are used for testing (in green). 
+
+\begin{table}[h]
+\caption{Descriptive statistics for highway crashes per 100 million VMT in Nevada}
+\label{tab:descriptive-stats-fatalities}
+\begin{center}
+\begin{tabular}{l@{\qquad}cc}
+  \toprule
+  \multirow{2}{*}{\raisebox{-\heavyrulewidth}{\bf STATISTIC}} & \multicolumn{2}{c}{\bf CRASH TYPE} \\
+  \cmidrule{2-3}
+  & {\bf Fatalities} & {\bf Serious~injuries} \\
+  \midrule
+  Mean & 1.69 & 12.82  \\
+  Std Dev & 0.43 & 3.99  \\
+  Min & 1.02 & 6.63  \\
+  Max & 2.24 & 20.97  \\
+  Count & 21 & 20  \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{figure}[h]
+\begin{center}
+% \vspace{1in}
+\includegraphics[width=\linewidth]{figures/data-fatalities.png}
+\caption{Number of fatal crashes per 100 million VMT}
+\label{fig:data-fatalities}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+% \vspace{1in}
+\includegraphics[width=\linewidth]{figures/data-injuries.png}
+\caption{Number of serious injuries per 100 million VMT}
+\label{fig:data-injuries}
+\end{center}
+\end{figure}
+
+
+% \begin{figure*}[t]
+% \begin{center}
+% % \vspace{1in}
+% \includegraphics[width=\linewidth]{figures/fatal-crashes-gp.png}
+% \caption{Gaussian Process with Spectral Mixture kernel}
+% \label{fig:gp-optimized-crashes}
+% \end{center}
+% \end{figure*}
+
+% Citations within the text should include the author's last name and
+% year, e.g., (Cheesman, 1985). Reference style should follow the style
+% that you are used to using, as long as the citation style is
+% consistent.
+
+% For the original submission, take care not to reveal the authors' identity through
+% the manner in which one's own previous work is cited.  For example, writing
+% ``In (Bovik, 1970), we studied the problem of AI'' would be inappropriate, as
+% it reveals the author's identity.  Instead, write ``(Bovik, 1970) studied the
+% problem of AI.''
+
+\begin{figure*}[t]
+      \subfloat[GP-SM for fatalities\label{subfig:model-fatalities}]{%
+       \includegraphics[width=3.1in]{figures/model-fatalities.png}
+     }
+     \hfill
+     \subfloat[GP-SM Optimized for fatalities\label{subfig:model-opt-fatalities}]{%
+       \includegraphics[width=3.1in]{figures/model-opt-fatalities.png}
+     }
+     \hfill
+     \subfloat[ARIMA for fatalities\label{subfig:arima-fatalities}]{%
+       \includegraphics[width=3.1in]{figures/model-fatalities-arima.png}
+     }
+     \hfill
+     \subfloat[Number of Iterations in Optimization for fatalities\label{subfig:iterations-fatalities}]{%
+       \includegraphics[width=3.1in]{figures/iterations-fatalities.png}
+     }
+      \hfill
+      \subfloat[GP-SM for serious injuries\label{subfig:model-injuries}]{%
+       \includegraphics[width=3.1in]{figures/model-injuries.png}
+     }
+     \hfill
+     \subfloat[GP-SM Optimized for serious injuries\label{subfig:model-opt-injuries}]{%
+       \includegraphics[width=3.1in]{figures/model-opt-injuries.png}
+     }
+     \hfill
+     \subfloat[ARIMA for serious injuries\label{subfig:arima-injuries}]{%
+       \includegraphics[width=3.1in]{figures/model-injuries-arima.png}
+     }
+     \hfill
+     \subfloat[Number of Iterations in Optimization for serious injuries\label{subfig:iterations-injuries}]{%
+       \includegraphics[width=3.1in]{figures/iterations-injuries.png}
+     }    
+     \caption{Comparison of Gaussian process models with spectral mixture kernels to ARIMA models for highway crashes.}
+     \label{fig:gp-posterior}
+\end{figure*}
+
+\subsubsection{Empirical Analysis}
+
+In the training region, predictions using both sARIMA and GP-SM are equivalent, and entirely overlap with training data. However, unlike sARIMA, the GP model (in black) is able to discover the patterns in the training data and accurately extrapolate over a long range. The 95\% credible interval (CI) contains the true highway crash counts for the duration of the measurements. 
+
+Figure 3.2 shows the structure discovered by the GP-SM model
+\lipsum[1-1]
+
+\begin{table}[h]
+\caption{Performance measures for the three different models on highway crashes per 100 million VMT}
+\label{tab:descriptive-stats-emails}
+\begin{center}
+\begin{tabular}{l@{\quad}cc@{\quad}cc}
+  \toprule
+  \multirow{2}{*}{\raisebox{-\heavyrulewidth}{\bf MODEL}} & \multicolumn{2}{c}{\bf FATALITIES} & \multicolumn{2}{c}{\bf INJURIES} \\
+  \cmidrule{2-5}
+  & {\bf RMSE} & {\bf MAPE} & {\bf RMSE} & {\bf MAPE} \\
+  \midrule
+  GP-SM & {\bf 0.06} & {\bf 3.31\%} & {\bf 0.87} & {\bf 11.5\%}  \\
+  GP-SM Opt & 0.24 & 14.00\% & 2.69 & 34.37\%  \\
+  ARIMA & 0.34 & 27.07\% & 1.68 & 17.72\%  \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\section{CONCLUSIONS AND FUTURE WORK}\label{conclusions-and-future-work}
+\lipsum[1-1]
+% \subsubsection{Footnotes}
+
+% Indicate footnotes with a number\footnote{Sample of the first
+% footnote} in the text. Use 8 point type for footnotes.  Place the
+% footnotes at the bottom of the page on which they appear.  Precede the
+% footnote with a 0.5 point horizontal rule 1~inch (6~picas)
+% long.\footnote{Sample of the second footnote}
+
+% \subsubsection{Figures}
+
+% All artwork must be centered, neat, clean, and legible. Figure number
+% and caption always appear below the figure.  Leave 2 line spaces
+% between the figure and the caption. The figure caption is initial caps
+% and each figure numbered consecutively.
+
+% Make sure that the figure caption does not get separated from the
+% figure. Leave extra white space at the bottom of the page rather than
+% splitting the figure and figure caption.
+
+
+
+
+% \subsubsection{Tables}
+
+% All tables must be centered, neat, clean, and legible. Table number
+% and title always appear above the table.  See
+% Table~\ref{sample-table}.
+
+% One line space before the table title, one line space after the table
+% title, and one line space after the table. The table title must be
+% initial caps and each table numbered consecutively.
+
+% \begin{table}[h]
+% \caption{Sample Table Title}
+% \label{sample-table}
+% \begin{center}
+% \begin{tabular}{ll}
+% \multicolumn{1}{c}{\bf PART}  &\multicolumn{1}{c}{\bf DESCRIPTION} \\
+% \hline \\
+% Dendrite         &Input terminal \\
+% Axon             &Output terminal \\
+% Soma             &Cell body (contains cell nucleus) \\
+% \end{tabular}
+% \end{center}
+% \end{table}
+
+
 
 \newpage
 
 \subsubsection*{Acknowledgements}
 
-Use unnumbered third level headings for the acknowledgements title.
-All acknowledgements go at the end of the paper.
+The authors would like to thank the CERT and Nevada Department of Transportation for providing the data used in empirical analyses. Special thanks to John Boatman for proof reviewing earlier versions of this paper.
 
 
-\subsubsection*{References}
+% \subsubsection*{References}
 
-References follow the acknowledgements.  Use unnumbered third level
-heading for the references title.  Any choice of citation style is
-acceptable as long as you are consistent.
+% References follow the acknowledgements.  Use unnumbered third level
+% heading for the references title.  Any choice of citation style is
+% acceptable as long as you are consistent.
+
+\bibliographystyle{apa}
+\bibliography{mybibfile}
 
 
-J.~Alspector, B.~Gupta, and R.~B.~Allen  (1989). Performance of a
-stochastic learning microchip.  In D. S. Touretzky (ed.), {\it Advances
-in Neural Information Processing Systems 1}, 748-760.  San Mateo, Calif.:
-Morgan Kaufmann.
+% J.~Alspector, B.~Gupta, and R.~B.~Allen  (1989). Performance of a
+% stochastic learning microchip.  In D. S. Touretzky (ed.), {\it Advances
+% in Neural Information Processing Systems 1}, 748-760.  San Mateo, Calif.:
+% Morgan Kaufmann.
 
-F.~Rosenblatt (1962). {\it Principles of Neurodynamics.} Washington,
-D.C.: Spartan Books.
+% F.~Rosenblatt (1962). {\it Principles of Neurodynamics.} Washington,
+% D.C.: Spartan Books.
 
-G.~Tesauro (1989). Neurogammon wins computer Olympiad.  {\it Neural
-Computation} {\bf 1}(3):321-323.
+% G.~Tesauro (1989). Neurogammon wins computer Olympiad.  {\it Neural
+% Computation} {\bf 1}(3):321-323.
 
 \end{document}

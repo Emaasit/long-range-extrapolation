@@ -21,13 +21,13 @@ Citation
 
 If you do end up using our code, please cite our paper as follows.
 
-    Emaasit, D., Veeramisti, N., Johnson, M., and Paz, A. (2018). Long-range Forecasting and Pattern Discovery given Limited Data. arXiv preprint arXiv:xxxx.xxxx
+    Emaasit, D. and Johnson, M.(2018). Long-range Forecasting and Pattern Discovery given Limited Data. arXiv preprint arXiv:xxxx.xxxx
 
 Or using BibTex as follows:
 
     @article{emaasit2018long,
       title={Long-range Forecasting and Pattern Discovery given Limited Data},
-      author={Emaasit, Daniel and Veeramisti, Naveen and Johnson, Matthew and Paz, Alexander, },
+      author={Emaasit, Daniel and Johnson, Matthew},
       journal={arXiv preprint arXiv:xxxx.xxxx},
       year={2018}
     }
