@@ -111,6 +111,12 @@ dependencies:
 - zeromq=4.2.2
 - zlib=1.2.11
 - pip:
+  - absl-py==0.1.10
+  - astor==0.6.2
+  - gast==0.2.0
+  - gpflow==0.4.0
+  - gpflowopt==0.1.0
+  - grpcio==1.10.0
   - ipython-genutils==0.2.0
   - ipywidgets-server==0.2.1
   - jupyter-client==5.2.2
@@ -121,6 +127,12 @@ dependencies:
   - jupyter-highlight-selected-word==0.1.0
   - jupyter-latex-envs==1.4.0
   - jupyter-nbextensions-configurator==0.4.0
+  - markdown==2.6.11
   - prompt-toolkit==1.0.15
+  - protobuf==3.5.1
+  - tensorboard==1.6.0
+  - tensorflow==1.6.0
+  - termcolor==1.1.0
+  - werkzeug==0.14.1
 prefix: /Users/demaasit/anaconda3/envs/myenv
 
