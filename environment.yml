@@ -53,7 +53,7 @@ dependencies:
 - libsodium=1.0.15
 - libxml2=2.9.7
 - libxslt=1.1.32
-- llvm=4.0.1
+#- llvm=4.0.1
 #- llvm-lto-tapi=4.0.1
 - lxml=4.1.1
 - markupsafe=1.0
