@@ -1,7 +1,7 @@
-Capturing Structure Implicitly from Limited and Noisy Time-Series Processes
-===========================================================================
+Capturing Structure Implicitly from Noisy Time-Series having Limited Data
+=========================================================================
 
-* Click this icon [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/haystax-technology/long-range-extrapolation/master?urlpath=lab) to open the notebooks in a web broser.
+* Click this icon [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/Emaasit/long-range-extrapolation/master?urlpath=lab) to open the notebooks in a web broser.
 
 <img src="code/notebooks/results/emails/model-emails.png" width="75%" />
 
@@ -9,7 +9,7 @@ Purpose
 -------
 
 This repo provides the code and data used to generate results in our
-paper "**Capturing Structure Implicitly from Limited and Noisy Time-Series Processes**"
+paper "**Capturing Structure Implicitly from Noisy Time-Series having Limited Data**"
 
 Abstract
 --------
@@ -21,12 +21,12 @@ Citation
 
 If you do end up using our code, please cite our paper as follows.
 
-    Emaasit, D. and Johnson, M.(2018). Capturing Structure Implicitly from Limited and Noisy Time-Series Processes. arXiv preprint arXiv:xxxx.xxxx
+    Emaasit, D. and Johnson, M.(2018). Capturing Structure Implicitly from Noisy Time-Series having Limited Data. arXiv preprint arXiv:xxxx.xxxx
 
 Or using BibTex as follows:
 
     @article{emaasit2018long,
-      title={Capturing Structure Implicitly from Limited and Noisy Time-Series Processes},
+      title={Capturing Structure Implicitly from Noisy Time-Series having Limited Data},
       author={Emaasit, Daniel and Johnson, Matthew},
       journal={arXiv preprint arXiv:xxxx.xxxx},
       year={2018}

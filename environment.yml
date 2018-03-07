@@ -114,8 +114,8 @@ dependencies:
   - absl-py==0.1.10
   - astor==0.6.2
   - gast==0.2.0
-  - gpflow==0.4.0
-  - gpflowopt==0.1.0
+  - git+https://github.com/GPflow/GPflow@0.4.0#egg=GPflow
+  - git+https://github.com/GPflow/GPflowOpt@master#egg=GPflowOpt
   - grpcio==1.10.0
   - ipython-genutils==0.2.0
   - ipywidgets-server==0.2.1
