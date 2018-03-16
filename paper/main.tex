@@ -25,7 +25,7 @@
 %%%%%%%%% my defined packages %%%%%
 % \usepackage{authblk}
 
-\title{Capturing Structure Implicitly from Noisy Time-Series having Limited Data}
+\title{Capturing Structure Implicitly from Time-Series having Limited Data}
 
 \author{} % LEAVE BLANK FOR ORIGINAL SUBMISSION.
           % UAI  reviewing is double-blind.
@@ -58,17 +58,16 @@ mjohnson@haystax.com\\
 \maketitle
 
 \begin{abstract}
-Scientific fields such as insider-threat detection and highway-safety planning often lack sufficient amounts of time-series data to estimate statistical models for the purpose of scientific discovery. Moreover, the available limited data are very noisy. This presents a major challenge when estimating time-series models. Most of the current literature in insider-threat detection and highway-safety planning involve visualizing the time-series for noticeable structure, such as periodicity, and hard coding them into pre-specified parametric functions. This approach is associated with two limitations. First, given that such trends may not be easily noticeable in small data, it is difficult to explicitly incorporate expressive structure into the models during formulation.  Second, it is difficult to know \textit{a priori} the most appropriate functional form to use. To address these limitations, a nonparametric Bayesian approach was proposed to implicitly capture hidden structure from noisy time series having limited data. The proposed model, a Gaussian process with a spectral mixture kernel, precludes the need to pre-specify a functional form and hard code trends.\todo[size=\small]{ithenticate check paper for plagiarism}%
+Scientific fields such as insider-threat detection and highway-safety planning often lack sufficient amounts of time-series data to estimate statistical models for the purpose of scientific discovery. Moreover, the available limited data are quite noisy. This presents a major challenge when estimating time-series models that are robust to overfitting and have well-calibrated uncertainty estimates. Most of the current literature in these fields involve visualizing the time-series for noticeable structure and hard coding them into pre-specified parametric functions. This approach is associated with two limitations. First, given that such trends may not be easily noticeable in small data, it is difficult to explicitly incorporate expressive structure into the models during formulation.  Second, it is difficult to know \textit{a priori} the most appropriate functional form to use. To address these limitations, a nonparametric Bayesian approach was proposed to implicitly capture hidden structure from time series having limited data. The proposed model, a Gaussian process with a spectral mixture kernel, precludes the need to pre-specify a functional form and hard code trends, is robust to overfitting and has well-calibrated uncertainty estimates.
 \end{abstract}
 
 \section{INTRODUCTION}
 
-Modeling expressive structure in time-series data is a vital requirement in several scientific fields including cyber security, insider-threat detection, and highway-safety planning for the purpose of scientific discovery. However, these fields often lack sufficient amounts of training data to accurately capture the entire structure of the phenomenon under study and consequently discover hidden patterns. For instance \cite{schrag2016probabilistic} emphasizes that typically cases of insider threat such as intellectual property theft through emails constitute less than 0.01\% of the overall insider activity. Out of 100,000 emails sent outside the organization over the course of 2 years only 30 were identified as IP theft. In highway safety planning, \cite{veeramisti2016business} mentions that Departments of Transportation (DOTs) only recently started collecting monthly crash data. 
-% \lipsum[1-1]
+Modeling expressive structure in time-series data is a vital requirement in several scientific fields including cyber security, insider-threat detection, and highway-safety planning for the purpose of scientific discovery. Chief risk officers (CRO) in large corporations and government agencies are tasked with forecasting potential risks to company assets by malicious employees or contractors. Departments of Transportation (DOTs) are mandated by the Federal Highway Administration (FHWA) to forecast highway crashes as part of their strategic highway safety plans (SHSPs) in order to obtain funding \citep{smith2016hsip}. However, these fields often lack sufficient amounts of training data to accurately capture the signal of the phenomenon under study and consequently discover hidden patterns. For instance \cite{greitzer2013methods} state that "ground truth" data on actual insider behavior is typically either not available or is limited. In some cases, one might acquire real data, but for privacy reasons, there is no attribution of any individuals relating to abuses or offenses—i.e., there is no ground truth. The data may contain insider threats, but these are not identified or knowable to the researcher \citep{greitzer2013methods,gheyas2016detection}. In highway-safety planning, \cite{veeramisti2016business} mentions that Departments of Transportation (DOTs) only recently started collecting monthly highway-crash data because of the high cost and extensive process of collecting the required data.
 
 \subsection{INSIDER THREAT}\label{insider-threat}
 
-Insider threats are malicious acts carried out by current or former employees or trusted partners of an organization who abuse their authorized access to an organization's networks, systems, and/or data \citep{glasser2013bridging, lindauer2014generating}. Insider threats include but not limited to, theft of intellectual property or national security information, fraud, and sabotage. Many government, academic, and industry groups seek to discover and develop solutions to detect and protect against these insider threats. However, the difficulty of obtaining suitable data for research, development, and testing remains a significant hinderance \citep{glasser2013bridging}. This is attributed to two major factors. First, confidentiality and privacy concerns create barriers to the collection and use of such data for research purposes. To collect real data, some organization must directly monitor and record the behavior and actions of its own employees. Second, insider threats are swarn-like behavior that are very rare and only collected after the fact \citep{gheyas2016detection}. Nonetheless, some studies have proposed methods for time series analysis. For example, \cite{stoffel2013finding} proposed a stochastic time series model, a seasonal auto-regressive integrated moving average (sARIMA) model, to forecast the number of emails sent by insiders.
+Insider threats are malicious acts carried out by current or former employees or trusted partners of an organization who abuse their authorized access to an organization's networks, systems, and/or data \citep{glasser2013bridging, lindauer2014generating}. Insider threats include but not limited to, theft of intellectual property or national security information, fraud, and sabotage. Many government, academic, and industry groups seek to discover and develop solutions to detect and protect against these insider threats. However, the difficulty of obtaining suitable data for research, development, and testing remains a significant hinderance \citep{glasser2013bridging}. This is attributed to two major factors. First, confidentiality and privacy concerns create barriers to the collection and use of such data for research purposes. To collect real data, some organization must directly monitor and record the behavior and actions of its own employees. Second, insider threats are black swan events that are very rare and only collected after the fact \citep{gheyas2016detection}. Nonetheless, some studies have proposed methods for time-series analysis. For example, \cite{stoffel2013finding} proposed a  Fourier and wavelet model, to estimate a time-series model for internet-traffic data from a computer network of workstations and servers.
 
 \subsection{HIGHWAY SAFETY}\label{highway-crash-safety}
 
@@ -78,13 +77,12 @@ The Federal Highway Administration (FHWA) requires state Departments of Transpor
 
 Current methods for time-series modeling for insider-threat detection and highway-safety planning (described in sections \ref{insider-threat} and \ref{highway-crash-safety}) are associated with two major limitations.  First, the methods involve visualizing the time series for noticeable structure and patterns such as periodicity, smoothness, growing/decreasing trends and then hard coding these patterns into the statistical models during formulation. This approach is suitable for large datasets where more data typically provides more information to learn expressive structure \citep{wilson2014covariance}. That is, an analyst is able to look at the data, recognize trends (i.e. periodicity, seasonal variation with possible decay away from periodicity, long-term rising/decreasing trends, medium-term irregularities, short seasonal variations, and noise), and then hard code those patterns into statistical algorithms such as ARIMA to represent each of these patterns. The limitation with this approach is that all the pattern discovery is done by the analyst and the resulting algorithm is used simply as a smoothing tool. Given limited amounts of data, it is difficult to explicitly incorporate expressive prior information (such as periodicity, smoothness, growing tends) into the statistical learning algorithms. 
 
-Second, most of the current literature focus on parametric models that impose strong restrictive assumptions by pre-specifying the functional form and number of parameters \citep{veeramisti2016business,gheyas2016detection}. Pre-specifying a functional form for a time-series model could lead to either overly complex model specifications or simplistic models. It is difficult to know \textit{a priori} the most appropriate function to use for modeling sophisticated insider-threat behavior and highway-crash occurrence that involve complex hidden patterns and many other influencing factors. Due to a finite number of parameters, parametric models are not necessarily the best to capture the entire structure of complex and sophisticated processes \citep{ghahramani2015probabilistic}, such as insider-threat behavior and highway-crash occurrence. \todo[size=\small]{add differencing, stationary limitation}%
+Second, most of the current literature focus on parametric models that impose strong restrictive assumptions by pre-specifying the functional form and number of parameters \citep{veeramisti2016business,gheyas2016detection}. Pre-specifying a functional form for a time-series model could lead to either overly complex model specifications or simplistic models. It is difficult to know \textit{a priori} the most appropriate function to use for modeling sophisticated insider-threat behavior and highway-crash occurrence that involve complex hidden patterns and many other influencing factors. Due to a finite number of parameters, parametric models are not necessarily the best to capture the entire structure of complex and sophisticated processes \citep{ghahramani2015probabilistic}, such as insider-threat behavior and highway-crash occurrence. 
 
 Given limited and noisy time-series data for insider-threat detection and highway-safety planning, is it possible to perform: (1) pattern discovery without hard-cording trends into statistical models during formulation, and (2) model estimation that precludes pre-specifying a functional form? To answer these two research questions and address the above described limitations, this paper proposed a nonparametric Bayesian framework which is applied as an example to estimate two time series models: (1) the size of email attachments sent outside an organization by insiders and (2) the annual number of highway crashes in Nevada. The proposed framework combines the flexibility of nonparametric Bayesian approaches \citep{williams2006gaussian,hjort2010bayesian,ghahramani2015probabilistic} and kernels with more expressive properties \citep{wilson2013gaussian, duvenaud2014automatic} than standard kernels proposed by \cite{williams2006gaussian}. In particular, a flexible nonparametric model -- i.e., the Gaussian process (GP) model --  is proposed as a prior distribution for the unknown regression functions, thereby precluding the need to pre-specify a functional form. Flexibility is achieved by making weaker assumptions about model structure, thereby capturing the underlying behavior from data by exploring an infinite dimensional space of possible functions. Moreover, an expressive covariance -- i.e., the spectral mixture (SM) kernel \citep{wilson2014covariance} -- is proposed as the covariance for the GP model thereby precluding the need to hard cord trends and consequently allows to automatically discover hidden structure from limited data. The SM kernel is particularly useful when standard kernels such as the radial basis function fail to capture functional structure \citep{schulz2017compositional} in limited noisy data commonly found in insider-threat detection and highway-crash analysis. Recent advances in computing and efficient sampling methods, such as the Hamiltonian Monte Carlo (HMC) \citep{hoffman2014no} enable fast inference in flexible models. Moreover, a Bayesian modeling approach was used for inference to quantify all uncertainty, using probability distributions. The proposed GP-SM model maintained the attractive interpretability properties of a standard GP model; that is, the posterior mean and credible intervals of the predicted series could be analyzed to visualize how the response variable varies over time. 
 
 The rest of this paper is organized as follows. Section \ref{methodology} describes the proposed methodology, including model formulation and estimation using two efficient Bayesian inference methods. Section \ref{experiments} describes the experiments performed including a description of the data used, the sample formation processes, and empirical analyses. Finally, a conclusion that summarizes the important findings from this study are presented in Section \ref{conclusions-and-future-work}, including recommendations for future research.
  
-
 \section{METHODOLOGY}\label{methodology}
 
 \subsection{MODEL FORMULATION}\label{model-formulation}
@@ -224,12 +222,32 @@ To obtain the sample for the current analysis, the dataset was processed as foll
 \end{center}
 \end{figure}
 
+\begin{figure*}[t]
+      \subfloat[GP-SM\label{subfig:model-emails}]{%
+       \includegraphics[width=3.1in]{figures/model-emails.png}
+     }
+     \hfill
+     \subfloat[GP-SM Optimized\label{subfig:model-opt-emails}]{%
+       \includegraphics[width=3.1in]{figures/model-opt-emails.png}
+     }
+     \hfill
+     \subfloat[ARIMA\label{subfig:model-emails-arima}]{%
+       \includegraphics[width=3.1in]{figures/model-emails-arima.png}
+     }  
+     \hfill
+     \subfloat[Number of Iterations of Bayesian Optimization\label{subfig:iterations-email}]{%
+       \includegraphics[width=3.1in]{figures/iterations-email.png}
+     }   
+     \caption{Comparison of Gaussian process models with spectral mixture kernels to ARIMA models for emails.}
+     \label{fig:gp-posterior-emails}
+\end{figure*}
+
 \subsubsection{Empirical Analysis}
 The first eleven data points shown in blue in Figure \ref{fig:data-emails} were used for training and the last three data points in red for testing. An appropriate number of terms in the sum, $Q$, was set to 10 as proposed by \cite{wilson2015human} resulting in 10 frequency parameters and 10 length-scale parameters. A maximum number of 30 iterations was chosen to tune the 20 hyperparameters for the optimized GP-SM. An ARIMA model was estimated using the methodology proposed by \cite{veeramisti2016business} for comparison.
 
-Figure \ref{fig:gp-posterior-emails} shows the results of the three estimated models. Figure \ref{subfig:model-emails} shows that the Gaussian process model with a spectral mixture kernel is able to capture the structure implicitly both in regions of the training and testing data. The 95\% predicted credible interval (CI) contains the true size of email attachments for the duration of the measurements. Furthermore, the C.I are much narrower than the other two models. Figure \ref{subfig:model-opt-emails} shows that the Gaussian process model with the hyperparameters of the spectral mixture kernel tuned using Bayesian optimization is also able to capture structure implicitly. The predictive performance is especially better in the region of the training data where the predicted data points entirely overlap with the training data. Performance in the region of testing data is comparable to the standard model. This finding suggests that hyperparameter tuning for small and noisy data without easily noticeable structure does not produce any significant model improvement. Figure \ref{subfig:model-emails-arima} shows that ARIMA model is not able to capture the structure within the region of training data. This finding suggests that ARIMA models have poor performance for small and noisy data without noticeable structure. The 95\% confidence interval for ARIMA is much wider than both the GP models showing a high degree of uncertaininty about the ARIMA predictions.
+Figure \ref{fig:gp-posterior-emails} shows the results of the three estimated models. Figure \ref{subfig:model-emails} shows that the Gaussian process model with a spectral mixture kernel is able to capture the structure implicitly both in regions of the training and testing data. The 95\% predicted credible interval (CI) contains the true size of email attachments for the duration of the measurements. Furthermore, the C.I are much narrower than the other two models. Figure \ref{subfig:model-opt-emails} shows that the Gaussian process model with the hyperparameters of the spectral mixture kernel tuned using Bayesian optimization is also able to capture structure implicitly. The predictive performance is especially better in the region of the training data where the predicted data points entirely overlap with the training data. Performance in the region of testing data is comparable to the standard model. This finding suggests that hyperparameter tuning for small data without easily noticeable structure does not produce any significant model improvement. Figure \ref{subfig:model-emails-arima} shows that ARIMA model is not able to capture the structure within the region of training data. This finding suggests that ARIMA models have poor performance for small data without noticeable structure. The 95\% confidence interval for ARIMA is much wider than both the GP models showing a high degree of uncertaininty about the ARIMA predictions.
 
-Table \ref{tab:performance-measures-emails} shows the performance measures for the three estimated models including the root mean square error (RMSE) and mean absolute percentage error (MAPE). The GP-SM model had the best predictive performance of 1.25 for RMSE and 27.96\% for MAPE. The GP-SM optimized model had a fairly similar predictive performance of 1.29 for RMSE and 28.80\% for the MAPE. The estimated ARIMA model had the worst predictive performance of 3.20 for RMSE and 93.44\% for the MAPE. These findings suggest that hyperparameter tunining for small and noisy data produces models of comparable performance. If parameter tuning takes a considerable amount of time, then it may not be necessarily to use if it does not produce any significant model improvement.
+Table \ref{tab:performance-measures-emails} shows the performance measures for the three estimated models including the root mean square error (RMSE) and mean absolute percentage error (MAPE). The GP-SM model had the best predictive performance of 1.25 for RMSE and 27.96\% for MAPE. The GP-SM optimized model had a fairly similar predictive performance of 1.29 for RMSE and 28.80\% for the MAPE. The estimated ARIMA model had the worst predictive performance of 3.20 for RMSE and 93.44\% for the MAPE. These findings suggest that hyperparameter tuning for small data produces models of comparable performance. If parameter tuning takes a considerable amount of time, then it may not be necessarily to use if it does not produce any significant model improvement.
 
 \begin{table}[h]
 \caption{Performance measures for the three different models on email data}
@@ -250,23 +268,55 @@ Table \ref{tab:performance-measures-emails} shows the performance measures for t
 \end{table}
 
 \begin{figure*}[t]
-      \subfloat[GP-SM\label{subfig:model-emails}]{%
-       \includegraphics[width=3.1in]{figures/model-emails.png}
-     }
-     \hfill
-     \subfloat[GP-SM Optimized\label{subfig:model-opt-emails}]{%
-       \includegraphics[width=3.1in]{figures/model-opt-emails.png}
-     }
-     \hfill
-     \subfloat[ARIMA\label{subfig:model-emails-arima}]{%
-       \includegraphics[width=3.1in]{figures/model-emails-arima.png}
+      \subfloat[Number of fatal crashes per 100 million VMT\label{subfig:data-fatalities}]{%
+       \includegraphics[width=3.1in]{figures/data-fatalities.png}
      }  
      \hfill
-     \subfloat[Number of Iterations of Bayesian Optimization\label{subfig:iterations-email}]{%
-       \includegraphics[width=3.1in]{figures/iterations-email.png}
+     \subfloat[Number of serious injuries per 100 million VMT\label{subfig:data-injuries}]{%
+       \includegraphics[width=3.1in]{figures/data-injuries.png}
      }   
-     \caption{Comparison of Gaussian process models with spectral mixture kernels to ARIMA models for emails.}
-     \label{fig:gp-posterior-emails}
+     \caption{Number of fatal and serious injury crashes per 100 million vehicle miles travel.}
+     \label{fig:data-crashes}
+\end{figure*}
+
+\begin{figure*}[t]
+      \subfloat[GP-SM for fatalities\label{subfig:model-fatalities}]{%
+       \includegraphics[width=0.48\linewidth]{figures/model-fatalities.png}
+     }
+     \hfill
+     \subfloat[GP-SM Optimized for fatalities\label{subfig:model-opt-fatalities}]{%
+       \includegraphics[width=0.48\linewidth]{figures/model-opt-fatalities.png}
+     }
+     \hfill
+     \subfloat[ARIMA for fatalities\label{subfig:model-fatalities-arima}]{%
+       \includegraphics[width=0.48\linewidth]{figures/model-fatalities-arima.png}
+     }
+     \hfill
+     \subfloat[Number of Iterations in Optimization for fatalities\label{subfig:iterations-fatalities}]{%
+       \includegraphics[width=0.48\linewidth]{figures/iterations-fatalities.png}
+     }
+     \caption{Comparison of Gaussian process models with spectral mixture kernels to ARIMA for fatal crashes.}
+     \label{fig:gp-posterior-fatalities}
+\end{figure*}
+
+\begin{figure*}[t]
+      \subfloat[GP-SM for serious injuries\label{subfig:model-injuries}]{%
+       \includegraphics[width=0.48\linewidth]{figures/model-injuries.png}
+     }
+     \hfill
+     \subfloat[GP-SM Optimized for serious injuries\label{subfig:model-opt-injuries}]{%
+       \includegraphics[width=0.48\linewidth]{figures/model-opt-injuries.png}
+     }
+     \hfill
+     \subfloat[ARIMA for serious injuries\label{subfig:model-injuries-arima}]{%
+       \includegraphics[width=0.48\linewidth]{figures/model-injuries-arima.png}
+     }
+     \hfill
+     \subfloat[Number of Iterations in Optimization for serious injuries\label{subfig:iterations-injuries}]{%
+       \includegraphics[width=0.48\linewidth]{figures/iterations-injuries.png}
+     }    
+     \caption{Comparison of Gaussian process models with spectral mixture kernels to ARIMA for serious injuries.}
+     \label{fig:gp-posterior-injuries}
 \end{figure*}
 
 \subsection{HIGHWAY SAFETY}
@@ -297,17 +347,6 @@ The final samples used for the current analysis include time-series of annual fa
 \end{center}
 \end{table}
 
-\begin{figure*}[t]
-      \subfloat[Number of fatal crashes per 100 million VMT\label{subfig:data-fatalities}]{%
-       \includegraphics[width=3.1in]{figures/data-fatalities.png}
-     }  
-     \hfill
-     \subfloat[Number of serious injuries per 100 million VMT\label{subfig:data-injuries}]{%
-       \includegraphics[width=3.1in]{figures/data-injuries.png}
-     }   
-     \caption{Number of fatal and serious injury crashes per 100 million vehicle miles travel.}
-     \label{fig:data-crashes}
-\end{figure*}
 % Citations within the text should include the author's last name and
 % year, e.g., (Cheesman, 1985). Reference style should follow the style
 % that you are used to using, as long as the citation style is
@@ -322,51 +361,11 @@ The final samples used for the current analysis include time-series of annual fa
 
 An appropriate number of terms in the sum, $Q$, was set to 10 as proposed by \cite{wilson2015human} resulting in 10 frequency parameters and 10 length-scale parameters. A maximum number of 30 iterations was chosen to tune the 20 hyperparameters for the optimized GP-SM. An ARIMA model was estimated using the methodology proposed by \cite{veeramisti2016business} for comparison.
 
-Figure \ref{fig:gp-posterior-fatalities} shows the results of the three estimated models for annual fatal crashes per 100M VMT. Figure \ref{subfig:model-fatalities} shows that the Gaussian process model with a spectral mixture kernel is able to capture the structure implicitly both in regions of the training and testing data. The 95\% predicted credible interval (CI) contains the true number of annual fatalities per 100M VMT albeit that they are are much wider than the other two models. Figure \ref{subfig:model-opt-fatalities} shows that the Gaussian process model with the hyperparameters of the spectral mixture kernel tuned using Bayesian optimization is also able to capture structure implicitly. The predictive performance is especially better in the region of the training data where the predicted data points entirely overlap with the training data. Predictive performance on testing data is poorer than the standard model. This finding suggests that hyperparameter tuning for small and noisy data without easily noticeable structure does not produce any significant model improvement. Figure \ref{subfig:model-fatalities-arima} shows that ARIMA model is not able to capture the structure within the region of testing data. This finding suggests that ARIMA models have poor performance for small and noisy data without noticeable structure. The 95\% confidence interval for ARIMA is much wider than both the GP models showing a high degree of uncertaininty about the ARIMA predictions.
+Figure \ref{fig:gp-posterior-fatalities} shows the results of the three estimated models for annual fatal crashes per 100M VMT. Figure \ref{subfig:model-fatalities} shows that the Gaussian process model with a spectral mixture kernel is able to capture the structure implicitly both in regions of the training and testing data. The 95\% predicted credible interval (CI) contains the true number of annual fatalities per 100M VMT albeit that they are are much wider than the other two models. Figure \ref{subfig:model-opt-fatalities} shows that the Gaussian process model with the hyperparameters of the spectral mixture kernel tuned using Bayesian optimization is also able to capture structure implicitly. The predictive performance is especially better in the region of the training data where the predicted data points entirely overlap with the training data. Predictive performance on testing data is poorer than the standard model. This finding suggests that hyperparameter tuning for small data without easily noticeable structure does not produce any significant model improvement. Figure \ref{subfig:model-fatalities-arima} shows that ARIMA model is not able to capture the structure within the region of testing data. This finding suggests that ARIMA models have poor performance for small data without noticeable structure. The 95\% confidence interval for ARIMA is much wider than both the GP models showing a high degree of uncertaininty about the ARIMA predictions.
 
-Figure \ref{fig:gp-posterior-injuries} shows the results of the three estimated models for annual serious injuries per 100M VMT. Figure \ref{subfig:model-injuries} shows that the Gaussian process model with a spectral mixture kernel is able to capture the structure implicitly both in regions of the training and testing data. The 95\% predicted credible interval (CI) contains the true number of annual serious injuries per 100M VMT. The C.I are much wider than the other two models. Figure \ref{subfig:model-opt-injuries} shows that the Gaussian process model with the hyperparameters of the spectral mixture kernel tuned using Bayesian optimization is also able to capture structure implicitly. The predictive performance is especially better in the region of the training data where the predicted data points entirely overlap with the training data. Predictive performance in the region of testing data is poorer compared to the standard model. This finding suggests that hyperparameter tuning for small and noisy data without easily noticeable structure does not produce any significant model improvement. Figure \ref{subfig:model-injuries-arima} shows that ARIMA model was also able to capture the structure within the region of testing data. This finding suggests that ARIMA models have good performance for time-series that have easily noticeable structure. The 95\% confidence interval for ARIMA is comparable narrower than the standard GP model showing a lesser degree of uncertainty about the ARIMA predictions.
+Figure \ref{fig:gp-posterior-injuries} shows the results of the three estimated models for annual serious injuries per 100M VMT. Figure \ref{subfig:model-injuries} shows that the Gaussian process model with a spectral mixture kernel is able to capture the structure implicitly both in regions of the training and testing data. The 95\% predicted credible interval (CI) contains the true number of annual serious injuries per 100M VMT. The C.I are much wider than the other two models. Figure \ref{subfig:model-opt-injuries} shows that the Gaussian process model with the hyperparameters of the spectral mixture kernel tuned using Bayesian optimization is also able to capture structure implicitly. The predictive performance is especially better in the region of the training data where the predicted data points entirely overlap with the training data. Predictive performance in the region of testing data is poorer compared to the standard model. This finding suggests that hyperparameter tuning for small data without easily noticeable structure does not produce any significant model improvement. Figure \ref{subfig:model-injuries-arima} shows that ARIMA model was also able to capture the structure within the region of testing data. This finding suggests that ARIMA models have good performance for time-series that have easily noticeable structure. The 95\% confidence interval for ARIMA is comparable narrower than the standard GP model showing a lesser degree of uncertainty about the ARIMA predictions.
 
-\begin{figure*}[h]
-      \subfloat[GP-SM for fatalities\label{subfig:model-fatalities}]{%
-       \includegraphics[width=0.48\linewidth]{figures/model-fatalities.png}
-     }
-     \hfill
-     \subfloat[GP-SM Optimized for fatalities\label{subfig:model-opt-fatalities}]{%
-       \includegraphics[width=0.48\linewidth]{figures/model-opt-fatalities.png}
-     }
-     \hfill
-     \subfloat[ARIMA for fatalities\label{subfig:model-fatalities-arima}]{%
-       \includegraphics[width=0.48\linewidth]{figures/model-fatalities-arima.png}
-     }
-     \hfill
-     \subfloat[Number of Iterations in Optimization for fatalities\label{subfig:iterations-fatalities}]{%
-       \includegraphics[width=0.48\linewidth]{figures/iterations-fatalities.png}
-     }
-     \caption{Comparison of Gaussian process models with spectral mixture kernels to ARIMA for fatal crashes.}
-     \label{fig:gp-posterior-fatalities}
-\end{figure*}
-
-\begin{figure*}[h]
-      \subfloat[GP-SM for serious injuries\label{subfig:model-injuries}]{%
-       \includegraphics[width=0.48\linewidth]{figures/model-injuries.png}
-     }
-     \hfill
-     \subfloat[GP-SM Optimized for serious injuries\label{subfig:model-opt-injuries}]{%
-       \includegraphics[width=0.48\linewidth]{figures/model-opt-injuries.png}
-     }
-     \hfill
-     \subfloat[ARIMA for serious injuries\label{subfig:model-injuries-arima}]{%
-       \includegraphics[width=0.48\linewidth]{figures/model-injuries-arima.png}
-     }
-     \hfill
-     \subfloat[Number of Iterations in Optimization for serious injuries\label{subfig:iterations-injuries}]{%
-       \includegraphics[width=0.48\linewidth]{figures/iterations-injuries.png}
-     }    
-     \caption{Comparison of Gaussian process models with spectral mixture kernels to ARIMA for serious injuries.}
-     \label{fig:gp-posterior-injuries}
-\end{figure*}
-
-Table \ref{tab:performance-measures-emails} shows the performance measures for the three estimated models including the root mean square error (RMSE) and mean absolute percentage error (MAPE). The GP-SM model had the best predictive performance of 1.25 for RMSE and 27.96\% for MAPE. The GP-SM optimized model had a fairly similar predictive performance of 1.29 for RMSE and 28.80\% for the MAPE. The estimated ARIMA model had the worst predictive performance of 3.20 for RMSE and 93.44\% for the MAPE. These findings suggest that hyperparameter tunining for small and noisy data produces models of comparable performance. If parameter tuning takes a considerable amount of time, then it may not be necessarily to use if it does not produce any significant model improvement.
+Table \ref{tab:performance-measures-emails} shows the performance measures for the three estimated models including the root mean square error (RMSE) and mean absolute percentage error (MAPE). The GP-SM model had the best predictive performance of 1.25 for RMSE and 27.96\% for MAPE. The GP-SM optimized model had a fairly similar predictive performance of 1.29 for RMSE and 28.80\% for the MAPE. The estimated ARIMA model had the worst predictive performance of 3.20 for RMSE and 93.44\% for the MAPE. These findings suggest that hyperparameter tunning for small data produces models of comparable performance. If parameter tuning takes a considerable amount of time, then it may not be necessarily to use if it does not produce any significant model improvement.
 
 \begin{table}[h]
 \caption{Performance measures for the three different models on highway crashes per 100 million VMT}
@@ -388,7 +387,7 @@ Table \ref{tab:performance-measures-emails} shows the performance measures for t
 
 
 \section{CONCLUSIONS AND FUTURE WORK}\label{conclusions-and-future-work}
-This paper proposed a Bayesian nonparametric framework to capture implicitly hidden structure in noisy time-series having limited data. The proposed framework, a Gaussian process with a spectral mixture kernel, was applied to time-series process for insider-threat detection and highway-safety planning. The proposed framework addresses two current challenges when analyzing very noisy time-series having limited data whereby the time series are visualized for noticeable structure such as periodicity, growing or decreasing trends and hard coding them into pre-specified functional forms. Experiments demonstrated that results from this framework outperform traditional ARIMA when the time series does not have easily noticeable structure and is very noisy. Future work will involve evaluating the proposed framework on other different types of insider-threat behavior. 
+This paper proposed a Bayesian nonparametric framework to capture implicitly hidden structure in time-series having limited data. The proposed framework, a Gaussian process with a spectral mixture kernel, was applied to time-series process for insider-threat detection and highway-safety planning. The proposed framework addresses two current challenges when analyzing quite noisy time-series having limited data whereby the time series are visualized for noticeable structure such as periodicity, growing or decreasing trends and hard coding them into pre-specified functional forms. Experiments demonstrated that results from this framework outperform traditional ARIMA when the time series does not have easily noticeable structure and is quite noisy. Future work will involve evaluating the proposed framework on other different types of insider-threat behavior. 
 
 % \subsubsection{Footnotes}
 
@@ -438,11 +437,12 @@ This paper proposed a Bayesian nonparametric framework to capture implicitly hid
 
 
 
-\newpage
+% \newpage
 
 \subsubsection*{Acknowledgements}
 
-The authors would like to thank the CERT-Division and Naveen Veeramisti for providing the "Insider Threat Tools dataset" and NDOT's highway crash data, respectively, used in the empirical analyses. Special thanks to John Boatman for proof reviewing earlier versions of this paper.
+The authors would like to thank the CERT-Division and Dr. Naveen Veeramisti for providing the "Insider Threat Tools dataset" and NDOT's highway-crash data, respectively, used in the empirical analyses. 
+% Special thanks to David Jones, Bob Schrag, and Rob Kerr for providing critical comments. Special thanks to John Boatman for proof reviewing earlier versions of this paper.
 
 
 % \subsubsection*{References}
